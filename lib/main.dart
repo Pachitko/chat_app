@@ -1,8 +1,9 @@
-import 'package:chatmessengerapp/firebase_options.dart'; // Импортируем конфигурации Firebase.
-import 'package:chatmessengerapp/services/auth/auth_gate.dart'; // Импортируем AuthGate, который будет управлять потоком аутентификации.
-import 'package:chatmessengerapp/services/auth/auth_service.dart'; // Импортируем AuthService для функционала аутентификации.
+import 'package:messenger/firebase_options.dart'; // Импортируем конфигурации Firebase.
+import 'package:messenger/services/auth/auth_gate.dart'; // Импортируем AuthGate, который будет управлять потоком аутентификации.
+import 'package:messenger/services/auth/auth_service.dart'; // Импортируем AuthService для функционала аутентификации.
 import 'package:firebase_core/firebase_core.dart'; // Импортируем основной пакет Firebase.
 import 'package:flutter/material.dart'; // Импортируем Material Design пакет для Flutter.
+import 'package:messenger/services/geoposition_service.dart';
 import 'package:provider/provider.dart'; // Импортируем библиотеку Provider для управления состоянием.
 
 void main() async {
@@ -16,11 +17,11 @@ void main() async {
   );
 }
 class MyApp extends StatelessWidget { // Определяем основной класс приложения, который является статичным и не изменяет своего состояния.
-  const MyApp({super.key}); // Конструктор класса MyApp с ключом.
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) { // Определяем метод построения UI.
-    return const MaterialApp(
+  Widget build(BuildContext context) {
+     return const MaterialApp(
       debugShowCheckedModeBanner: false, // Убираем баннер режима отладки в углу экрана.
       home: AuthGate(), // Устанавливаем AuthGate в качестве домашнего экрана.
     );

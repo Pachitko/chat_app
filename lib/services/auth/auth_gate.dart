@@ -1,4 +1,4 @@
-import 'package:chatmessengerapp/services/auth/login_or_register.dart'; // Импорт файла login_or_register.dart из директории сервисов аутентификации
+import 'package:messenger/services/auth/login_or_register.dart'; // Импорт файла login_or_register.dart из директории сервисов аутентификации
 import 'package:firebase_auth/firebase_auth.dart'; // Импорт Firebase Auth для аутентификационных функций
 import 'package:flutter/material.dart';
 

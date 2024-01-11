@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> { // Состояние для Home
   final FirebaseAuth _auth = FirebaseAuth.instance; // Экземпляр FirebaseAuth для текущего пользователя.
 
   // Функция для выхода пользователя.
-  void signOut(){
+  void signOut() {
     // Получение сервиса аутентификации.
     final authService = Provider.of<AuthService>(context, listen: false);
     authService.signOut(); // Вызов функции выхода через сервис аутентификации.

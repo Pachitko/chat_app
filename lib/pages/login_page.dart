@@ -1,12 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 // Импортируем необходимые пакеты
-import 'package:chatmessengerapp/components/my_button.dart'; // Пользовательский виджет кнопки
-import 'package:chatmessengerapp/components/my_text_field.dart'; // Пользовательский виджет текстового поля
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:messenger/components/my_button.dart'; // Пользовательский виджет кнопки
+import 'package:messenger/components/my_text_field.dart'; // Пользовательский виджет текстового поля
 import 'package:flutter/material.dart'; // Основной пакет виджетов и стилей Flutter
 import 'package:provider/provider.dart'; // Пакет для управления состоянием приложения через Provider
 
-import '../services/auth/auth_service.dart'; // Сервис аутентификации пользователя
+import '../services/auth/auth_service.dart';
+import '../services/geoposition_service.dart'; // Сервис аутентификации пользователя
 
 // Создание класса LoginPage, который будет состоянием StatefulWidget
 class LoginPage extends StatefulWidget {
@@ -22,6 +25,15 @@ class _LoginPageState extends State<LoginPage> {
   // Контроллеры текста для управления вводом пользователя
   final emailController = TextEditingController(); // Контроллер для электронной почты
   final passwordController = TextEditingController(); // Контроллер для пароля
+  final _geoPositionService = new GeopositionService();
+
+  @override
+  void initState () {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _geoPositionService.saveCurrentGeoPosition();
+    });
+  }
 
   // Метод для входа пользователя в систему
   void signIn() async {
@@ -42,71 +54,100 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-@override
-Widget build(BuildContext context) { 
-  return Scaffold( // Создает основную структуру визуального макета приложения
-    backgroundColor: Colors.grey[300], // Устанавливает фоновый цвет Scaffold
-    body: SafeArea( // Виджет, создающий область в интерфейсе, которая не перекрывается, например, нотчем или системными индикаторами
-      child: SingleChildScrollView( // Этот виджет позволяет прокручивать его содержимое, если оно переполняет видимую область
-        child: Expanded( // Виджет, который расширяет дочерний элемент, чтобы заполнить все доступное пространство
-          child: Center( // Центрирует его дочерний элемент
-            child: Padding( // Применяет отступы ко всем граням дочернего элемента
-              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 50.0), // Устанавливает горизонтальные и вертикальные отступы
-              child: Column( // Виджет, который отображает своих детей в вертикальной последовательности
-                mainAxisAlignment: MainAxisAlignment.center, // Центрует детей в основной оси (вертикальной)
-                children: [ // Массив дочерних виджетов
-                  SizedBox(height: 50,), // Оставляет пустое пространство с фиксированной высотой
-                  // значок сообщения
-                  Icon( // Виджет иконки
-                    Icons.message, // Значок иконки
-                    size: 100, // Размер значка
-                    color: Colors.grey[700], // Цвет значка
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Создает осноную структуру визуального макета приложения
+        backgroundColor: Colors.grey[300],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 25.0, vertical: 50.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Icon(
+                        Icons.message,
+                        size: 100,
+                        color: Colors.grey[700],
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Text(
+                        "Welcome Back! We missed you!",
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      MyTextField(
+                          controller: emailController,
+                          hintText: 'Email',
+                          obscureText: false),
+                      SizedBox(height: 10),
+                      MyTextField(
+                          controller: passwordController,
+                          hintText: 'Password',
+                          obscureText: true),
+                      SizedBox(height: 25),
+                      MyButton(onTap: signIn, text: "Sign In"),
+                      SizedBox(height: 50),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Not a member?'),
+                          SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: widget.onTap,
+                            child: Text(
+                              'Register Now',
+                              style: TextStyle(
+                                  fontWeight:
+                                  FontWeight.bold
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: signInWithGoogle,
+                            child: Text(
+                              'Sign in with google',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
-                  SizedBox(height: 50,), // Оставляет пустое пространство с фиксированной высотой
-                  // приветственное сообщение
-                  Text( // Виджет текста
-                    "Welcome Back! We missed you!", // Текст, который будет отображаться
-                    style: TextStyle( // Стиль текста
-                      fontSize: 20, // Размер шрифта текста
-                    ),
-                  ),
-                  SizedBox(height: 25,), // Оставляет пустое пространство с фиксированной высотой
-                  // поле для электронной почты
-                  MyTextField( // Пользовательский виджет текстового поля (не встроенный, должен быть определен в другом месте кода)
-                      controller: emailController, // Контроллер для управления содержимым текстового поля
-                      hintText: 'Email', // Текст-подсказка, отображаемый в текстовом поле, когда оно пустое
-                      obscureText: false), // Скрывает текст, если true (используется для паролей). Здесь set to false
-                  SizedBox(height: 10), // Оставляет пустое пространство с фиксированной высотой
-                  // поле для пароля 
-                  MyTextField( // Пользовательский виджет текстового поля
-                      controller: passwordController, // Контроллер для управления содержимым текстового поля
-                      hintText: 'Password', // Текст-подсказка
-                      obscureText: true), // Текст становится невидимым при вводе, обычно для паролей
-                  SizedBox(height: 25), // Оставляет пустое пространство с фиксированной высотой
-                  // кнопка входа
-                  MyButton(onTap: signIn, text: "Sign In"), // Пользовательский виджет кнопки (не встроенный)
-
-                  SizedBox(height: 50), // Оставляет пустое пространство с фиксированной высотой
-                  // зарегистрироваться
-                  Row( // Виджет, располагающий своих детей в горизонтальной последовательности
-                    mainAxisAlignment: MainAxisAlignment.center, // Центрирует детей в основной оси (горизонтальной)
-                    children: [ 
-                    Text('Not a member?'), // Виджет текста, отображает эту строку
-                    SizedBox(width: 4), // Горизонтальный отступ
-                    GestureDetector( // Виджет для обработки касаний
-                      onTap: widget.onTap, // Функция, которая вызывается при касании
-                      child: Text('Register Now', // Виджет текста с предложением зарегистрироваться
-                      style: TextStyle( // Стиль текста
-                        fontWeight: FontWeight.bold // Жирное начертание
-                      ),),
-                    ),
-                  ],)
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    ));
+        ));
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }

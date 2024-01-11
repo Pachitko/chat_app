@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'package:chatmessengerapp/services/auth/auth_service.dart'; // Подключение библиотеки сервиса аутентификации
+import 'package:messenger/services/auth/auth_service.dart'; // Подключение библиотеки сервиса аутентификации
 import 'package:flutter/material.dart'; // Подключение основной библиотеки Flutter для разработки интерфейса
 import 'package:provider/provider.dart'; // Подключение библиотеки Provider для управления состоянием приложения
 
@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Passwords do not match'))); // Отображение уведомления, если пароли не совпадают
-          return; // Прерывание выполнения метода, если пароли не совпают
+      return; // Прерывание выполнения метода, если пароли не совпают
     }
 
     // Получение экземпляра сервиса аутентификации
@@ -45,14 +45,14 @@ class _RegisterPageState extends State<RegisterPage> {
         SnackBar(content: Text(e.toString())),
       );
     }
-  
+
   }
 
   @override
   Widget build(BuildContext context) {
     // Создаем виджет-структуру страницы.
     return Scaffold(
-        // Цвет фона устанавливаем в светло-серый.
+      // Цвет фона устанавливаем в светло-серый.
         backgroundColor: Colors.grey[300],
         // Создаем безопасную зону (избегаем "вырезов" и других препятствий).
         body: SafeArea(
